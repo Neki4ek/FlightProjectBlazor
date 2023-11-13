@@ -1,0 +1,75 @@
+﻿@page "/"
+@using BlazordemoApp1.Data
+@inject FlightPlanService flightPlanService
+
+
+
+<div class="flight-page">
+    <h1 style="margin-bottom:20px;">Add Flight Plan</h1>
+
+    <div class="add-stage">
+        <label for="course">Course:</label>
+        <input type="text" id="course" @bind="@newFlightPlan.Course" />
+
+        <label for="speed">Indicated Air Speed (m/s):</label>
+        <input type="number" id="speed" step="0.01" @bind="@newFlightPlan.IndicatedAirSpeed" />
+
+        <label for="altitude">True Altitude:</label>
+        <input type="number" id="altitude" @bind="@newFlightPlan.TrueAltitude" />
+
+        <button class="add" @onclick="AddFlightPlan">Add</button>
+    </div>
+    <h2>Current Flight Plan</h2>
+
+    @if (flightPlans == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Course</th>
+                    <th>IndicatedAirSpeed</th>
+                    <th>TrueAltitude</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{int index = 1;}
+                
+                @foreach (var flightPlan in flightPlans)
+                {
+                    @if (flightPlan.Course != null && flightPlan.IndicatedAirSpeed != null && flightPlan.TrueAltitude != null)
+                    {
+                        <tr>
+                            <td>@index</td>
+                        <td>@flightPlan.Course</td>
+                        <td>@flightPlan.IndicatedAirSpeed</td>
+                        <td>@flightPlan.TrueAltitude</td>
+                        </tr>
+                        index++;
+                    }
+                }
+            </tbody>
+        </table>
+    }
+</div>
+@code {
+    private List<FlightPlan> flightPlans;
+
+    private FlightPlan newFlightPlan = new FlightPlan();
+
+    protected override void OnInitialized()
+    {
+        flightPlans = flightPlanService.GetAllFlightPlans();
+    }
+
+    private void AddFlightPlan()
+    {
+        flightPlanService.AddFlightPlan(newFlightPlan);
+        newFlightPlan = new FlightPlan();
+        flightPlans = flightPlanService.GetAllFlightPlans();
+    }
+}
