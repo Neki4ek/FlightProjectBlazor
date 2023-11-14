@@ -3,58 +3,52 @@
 @inject FlightPlanService flightPlanService
 
 
-
+    <div>
+        <h1>Make Your Flight Simulation</h1>
+    </div>
 <div class="flight-page">
-    <h1 style="margin-bottom:20px;">Add Flight Plan</h1>
-
-    <div class="add-stage">
+    <div class="add_plans">
+        <h3>Add Flight Plan</h3>
         <label for="course">Course:</label>
-        <input type="text" id="course" @bind="@newFlightPlan.Course" />
+        <input type="text" id="course" placeholder="Название курса" required @bind="@newFlightPlan.Course" />
 
         <label for="speed">Indicated Air Speed (m/s):</label>
-        <input type="number" id="speed" step="0.01" @bind="@newFlightPlan.IndicatedAirSpeed" />
+        <input type="number" id="speed" step="0.01" required placeholder="Скорость" @bind="@newFlightPlan.IndicatedAirSpeed" />
 
         <label for="altitude">True Altitude:</label>
-        <input type="number" id="altitude" @bind="@newFlightPlan.TrueAltitude" />
-
-        <button class="add" @onclick="AddFlightPlan">Add</button>
+        <input type="number" id="altitude" required placeholder="Высота" @bind="@newFlightPlan.TrueAltitude" />
+        <div class="btn-add-clear">
+            <button type="button" class="examplebtn" @onclick="AddFlightPlan">Add</button>
+            <button type="button" class="examplebtn" @onclick="ClearFlightPlans">Clear</button>
+        </div>
     </div>
-    <h2>Current Flight Plan</h2>
 
-    @if (flightPlans == null)
-    {
-        <p><em>Loading...</em></p>
-    }
-    else
-    {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Course</th>
-                    <th>IndicatedAirSpeed</th>
-                    <th>TrueAltitude</th>
-                </tr>
-            </thead>
-            <tbody>
-                @{int index = 1;}
-                
-                @foreach (var flightPlan in flightPlans)
+    <hr />
+
+    <h2>Flight Plan List</h2>
+    <table class="table-plans">
+        <thead>
+            <tr class="elements">
+                <th class="element">Course</th>
+                <th class="element">Indicated Air Speed (m/s)</th>
+                <th class="element">True Altitude</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var flightPlan in flightPlans)
+            {
+                @if (flightPlans == null)
                 {
-                    @if (flightPlan.Course != null && flightPlan.IndicatedAirSpeed != null && flightPlan.TrueAltitude != null)
-                    {
-                        <tr>
-                            <td>@index</td>
-                        <td>@flightPlan.Course</td>
-                        <td>@flightPlan.IndicatedAirSpeed</td>
-                        <td>@flightPlan.TrueAltitude</td>
-                        </tr>
-                        index++;
-                    }
+                   <tr><td>Loading...</td></tr>
                 }
-            </tbody>
-        </table>
-    }
+                <tr class="stage-elements">
+                    <td class="stage-element">@flightPlan.Course</td>
+                    <td class ="stage-element">@flightPlan.IndicatedAirSpeed</td>
+                    <td class="stage-element">@flightPlan.TrueAltitude</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
 @code {
     private List<FlightPlan> flightPlans;
@@ -64,6 +58,11 @@
     protected override void OnInitialized()
     {
         flightPlans = flightPlanService.GetAllFlightPlans();
+    }
+
+    private void ClearFlightPlans()
+    {
+        flightPlans.Clear();
     }
 
     private void AddFlightPlan()
